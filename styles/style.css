@@ -93,7 +93,7 @@ body {
     outline: none;
     cursor: pointer; }
   .header #butClear {
-      background: url(/images/icon_delete_24px.png) center center no-repeat; }
+      background: url(/images/icon_clear_24px.png) center center no-repeat; }
   .header #butRefresh {
     background: url(/images/ic_refresh_white_24px.svg) center center no-repeat; }
   .header #butAdd {
