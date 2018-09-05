@@ -6,7 +6,7 @@
     key: 'newyork',
     label: 'New York, NY',
     currently: {
-      time: 1453489481,
+      time: 1459089481,
       summary: 'Clear',
       icon: 'partly-cloudy-day',
       temperature: 52.74,
@@ -48,9 +48,14 @@
    * Event listeners for UI elements
    *
    ****************************************************************************/
+  
+  /* Event listener for clear button */
+  document.getElementById('butClear').addEventListener('click', function() {
+    app.clearData();
+  });
 
   /* Event listener for refresh button */
-  document.getElementById('butRefresh').addEventListener('click', function() {
+   document.getElementById('butRefresh').addEventListener('click', function() {
     app.updateForecasts();
   });
 
@@ -68,6 +73,7 @@
     var label = selected.textContent;
     app.getForecast(key, label);
     app.selectedCities.push({key: key, label: label});
+    app.saveSelectedCities();
     app.toggleAddDialog(false);
   });
 
@@ -91,6 +97,12 @@
       app.addDialog.classList.remove('dialog-container--visible');
     }
   };
+
+  //clear weather forecasting data
+  app.clearData = function(){
+    window.localforage.clear();
+    window.location.reload();
+  }
 
   // Updates a weather card with the latest weather forecast. If the card
   // doesn't already exist, it's cloned from the template.
@@ -177,6 +189,36 @@
     });
   };
 
-  app.updateForecastCard(injectedForecast);
+/**** 
+      This was before storage functionality is being use.
+      The injected data is used to give temporary data when the user open the app  
+      app.updateForecastCard(injectedForecast);
+****/
+
+//by using this new updated function the app will generate last city the user had save
+
+app.saveSelectedCities = function() {
+  window.localforage.setItem('selectedCities', app.selectedCities);
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  window.localforage.getItem('selectedCities', function(err, cityList) {
+    if (cityList) {
+      app.selectedCities = cityList;
+      app.selectedCities.forEach(function(city) {
+        app.getForecast(city.key, city.label);
+      });
+    } 
+    // if the user doesn't have any of selected city
+      else {
+      app.updateForecastCard(injectedForecast);
+      app.selectedCities = [
+        {key: injectedForecast.key, label: injectedForecast.label}
+      ];
+      app.saveSelectedCities();
+    }
+  });    
+});
+
 
 })();
